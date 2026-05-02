@@ -140,7 +140,7 @@ export default function ReportsPage() {
               margin={{
                 top: 10,
                 right: 20,
-                left: 30,
+                left: 20,
                 bottom: 0,
               }}
             >
@@ -166,7 +166,7 @@ export default function ReportsPage() {
               />
 
               <YAxis
-                width ={80}
+                width ={70}
                 tickLine={false}
                 axisLine={false}
                 fontSize={12}
