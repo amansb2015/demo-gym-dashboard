@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GymFlow Offline</title>
+    <style>
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        background: #0f172a;
+        color: #f8fafc;
+        font-family: Inter, system-ui, sans-serif;
+      }
+      main {
+        width: min(360px, calc(100vw - 40px));
+      }
+      h1 {
+        font-size: 32px;
+        margin: 0 0 12px;
+      }
+      p {
+        color: #cbd5e1;
+        line-height: 1.6;
+      }
+      a {
+        display: inline-flex;
+        margin-top: 18px;
+        color: #0f172a;
+        background: #a3e635;
+        padding: 14px 18px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 800;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>You are offline</h1>
+      <p>GymFlow is ready when the network comes back. Previously opened pages may still work from cache.</p>
+      <a href="/">Try again</a>
+    </main>
+  </body>
+</html>

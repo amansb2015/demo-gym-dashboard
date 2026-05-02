@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192" role="img" aria-label="GymFlow icon">
+  <rect width="192" height="192" rx="42" fill="#0f172a"/>
+  <path d="M48 103h18V89H48v14Zm78 0h18V89h-18v14ZM70 78h18v36H70V78Zm34 0h18v36h-18V78Zm-12 15h8v6h-8v-6Z" fill="#a3e635"/>
+  <path d="M42 70h18v52H42V70Zm90 0h18v52h-18V70Zm-62 21h52v10H70V91Z" fill="#f8fafc"/>
+  <circle cx="96" cy="142" r="8" fill="#10b981"/>
+</svg>
