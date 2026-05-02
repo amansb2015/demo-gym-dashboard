@@ -42,11 +42,30 @@ export default function DashboardPage() {
 
   const chartData = useMemo(() => {
     const totals = new Map<string, number>();
+
     state.payments.forEach((payment) => {
-      const key = new Date(payment.paid_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
-      totals.set(key, (totals.get(key) ?? 0) + Number(payment.amount));
+      const date = new Date(payment.paid_at);
+
+      const dayKey = date.toISOString().split('T')[0];
+
+      totals.set(
+        dayKey,
+        (totals.get(dayKey) ?? 0) + Number(payment.amount)
+      );
     });
-    return Array.from(totals.entries()).map(([day, revenue]) => ({ day, revenue }));
+
+    return Array.from(totals.entries())
+      .sort(
+        (a, b) =>
+          new Date(a[0]).getTime() - new Date(b[0]).getTime()
+      )
+      .map(([date, revenue]) => ({
+        day: new Date(date).toLocaleDateString('en-IN', {
+          day: '2-digit',
+          month: 'short',
+        }),
+        revenue,
+      }));
   }, [state.payments]);
 
   async function loadDashboard() {
@@ -128,7 +147,7 @@ export default function DashboardPage() {
                 <XAxis dataKey="day" tickLine={false} axisLine={false} fontSize={12} />
                 <YAxis tickLine={false} axisLine={false} fontSize={12} />
                 <Tooltip formatter={(value) => formatCurrency(Number(value))} />
-                <Area type="monotone" dataKey="revenue" stroke="#059669" strokeWidth={3} fill="url(#revenue)" />
+                <Area type="linear" dataKey="revenue" stroke="#059669" strokeWidth={3} fill="url(#revenue)" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
