@@ -116,7 +116,7 @@ export default function ReportsPage() {
         <StatCard title="Visits" value={attendance.length} icon={FileText} tone="orange" />
       </div>
 
-      <section className="mobile-card overflow-hidden px-1">
+      <section className="mobile-card overflow-hidden ">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-xl font-black tracking-tight text-slate-900 dark:text-white">
@@ -133,7 +133,7 @@ export default function ReportsPage() {
           </div>
         </div>
 
-        <div className="mt-6 h-72 pr-1">
+        <div className="mt-6 h-72 ">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart
               data={chartData}
