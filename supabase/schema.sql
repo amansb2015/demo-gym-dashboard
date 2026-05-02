@@ -52,6 +52,7 @@ create table public.payments (
   receipt_id text not null unique,
   screenshot_url text,
   transaction_id text,
+  utr_number text,
   upi_id text,
   sender_name text,
   created_at timestamptz not null default now()

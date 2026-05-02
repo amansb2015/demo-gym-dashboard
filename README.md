@@ -40,8 +40,9 @@ npm run dev
 3. Optional: run `supabase/seed.sql` for sample members, payments, and attendance.
 4. The schema creates Storage buckets for `payment-screenshots`, `member-photos`, and `gym-assets`. Payment screenshots are private by default.
 5. If you later display screenshot previews, generate signed URLs for `payment-screenshots` instead of exposing public URLs.
-6. Create users in Supabase Auth.
-7. Set the first owner as admin:
+6. If your database was created before the UTR field was added, run `supabase/add_utr_number.sql` once.
+7. Create users in Supabase Auth.
+8. Set the first owner as admin:
 
 ```sql
 update public.profiles

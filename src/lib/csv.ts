@@ -2,7 +2,7 @@ export function downloadCsv(filename: string, rows: Array<Record<string, string 
   const headers = Object.keys(rows[0] ?? {});
   const escape = (value: string | number | null | undefined) => {
     const text = String(value ?? '');
-    return `"${text.replaceAll('"', '""')}"`;
+    return `"${text.replace(/"/g, '""')}"`;
   };
   const csv = [headers.join(','), ...rows.map((row) => headers.map((header) => escape(row[header])).join(','))].join('\n');
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });

@@ -16,8 +16,9 @@ export default function PaymentsPage() {
   const [memberId, setMemberId] = useState('');
   const [amount, setAmount] = useState('');
   const [method, setMethod] = useState<PaymentMethod>('online');
-  const [paidAt, setPaidAt] = useState(new Date().toISOString().slice(0, 16));
+  const [paidAt, setPaidAt] = useState(toDateTimeLocalValue(new Date()));
   const [transactionId, setTransactionId] = useState('');
+  const [utrNumber, setUtrNumber] = useState('');
   const [upiId, setUpiId] = useState('');
   const [senderName, setSenderName] = useState('');
   const [notes, setNotes] = useState('');
@@ -49,9 +50,10 @@ export default function PaymentsPage() {
       setOcrText(result.rawText);
       if (result.amount) setAmount(String(result.amount));
       if (result.transactionId) setTransactionId(result.transactionId);
+      if (result.utrNumber) setUtrNumber(result.utrNumber);
       if (result.upiId) setUpiId(result.upiId);
       if (result.senderName) setSenderName(result.senderName);
-      if (result.paidAt) setPaidAt(result.paidAt.slice(0, 16));
+      if (result.paidAt) setPaidAt(result.paidAt);
       toast.success('Screenshot scanned. Please review before saving.');
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'OCR failed');
@@ -76,7 +78,7 @@ export default function PaymentsPage() {
       }
 
       const receiptId = `GYM-${Date.now().toString(36).toUpperCase()}`;
-      const { data: savedPayment, error } = await supabase.from('payments').insert({
+      const paymentPayload = {
         member_id: memberId,
         amount: Number(amount),
         method,
@@ -86,9 +88,17 @@ export default function PaymentsPage() {
         receipt_id: receiptId,
         screenshot_url: screenshotUrl,
         transaction_id: transactionId || null,
+        utr_number: utrNumber || null,
         upi_id: upiId || null,
         sender_name: senderName || null,
-      }).select('id').single();
+      };
+      let { data: savedPayment, error } = await supabase.from('payments').insert(paymentPayload).select('id').single();
+      if (error?.message.toLowerCase().includes('utr_number')) {
+        const { utr_number: _utrNumber, ...legacyPayload } = paymentPayload;
+        const retry = await supabase.from('payments').insert(legacyPayload).select('id').single();
+        savedPayment = retry.data;
+        error = retry.error;
+      }
       if (error) throw error;
       if (file && screenshotUrl && savedPayment?.id) {
         await supabase.from('payment_screenshots').insert({
@@ -101,6 +111,7 @@ export default function PaymentsPage() {
       toast.success(`Payment saved: ${receiptId}`);
       setAmount('');
       setTransactionId('');
+      setUtrNumber('');
       setUpiId('');
       setSenderName('');
       setNotes('');
@@ -194,6 +205,7 @@ export default function PaymentsPage() {
           <Field label="Transaction ID" value={transactionId} onChange={setTransactionId} />
           <Field label="UPI ID" value={upiId} onChange={setUpiId} />
         </div>
+        <Field label="UTR number" value={utrNumber} onChange={setUtrNumber} />
         <Field label="Sender name" value={senderName} onChange={setSenderName} />
         <label>
           <span className="label">Notes</span>
@@ -234,4 +246,9 @@ function Field({ label, value, onChange }: { label: string; value: string; onCha
       <input className="field" value={value} onChange={(event) => onChange(event.target.value)} />
     </label>
   );
+}
+
+function toDateTimeLocalValue(date: Date) {
+  const pad = (value: number) => String(value).padStart(2, '0');
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
 }

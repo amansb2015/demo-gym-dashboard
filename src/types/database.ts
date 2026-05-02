@@ -50,6 +50,7 @@ export type Payment = {
   receipt_id: string;
   screenshot_url: string | null;
   transaction_id: string | null;
+  utr_number: string | null;
   upi_id: string | null;
   sender_name: string | null;
   created_at: string;
