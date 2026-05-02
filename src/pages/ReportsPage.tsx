@@ -254,5 +254,5 @@ export default function ReportsPage() {
           </div>
         </section>
       </div>
-      </div>);
+      );
 }
