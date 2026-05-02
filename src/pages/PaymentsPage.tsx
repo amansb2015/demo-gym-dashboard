@@ -1,5 +1,5 @@
 import { FormEvent, useEffect, useState } from 'react';
-import { Camera, FileImage, ReceiptText, ScanLine } from 'lucide-react';
+import { Camera, FileImage, Images, ReceiptText, ScanLine } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '../components/ui/Button';
 import { EmptyState } from '../components/ui/EmptyState';
@@ -123,15 +123,37 @@ export default function PaymentsPage() {
       </div>
 
       <form onSubmit={savePayment} className="mobile-card space-y-4">
-        <label className="block">
+        <div>
           <span className="label">Payment screenshot</span>
-          <div className="flex min-h-32 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-slate-300 bg-slate-50 p-4 text-center dark:border-slate-700 dark:bg-slate-800">
+          <div className="flex min-h-36 flex-col items-center justify-center rounded-lg border-2 border-dashed border-slate-300 bg-slate-50 p-4 text-center dark:border-slate-700 dark:bg-slate-800">
             <FileImage className="text-slate-400" size={32} />
             <p className="mt-2 text-sm font-black">{file ? file.name : 'Upload UPI/bank screenshot'}</p>
             <p className="mt-1 text-xs font-semibold text-slate-500">OCR auto-fills amount, UPI, txn ID, date</p>
-            <input className="sr-only" type="file" accept="image/*" capture="environment" onChange={(event) => handleFile(event.target.files?.[0] ?? null)} />
+            <div className="mt-4 grid w-full grid-cols-2 gap-2">
+              <label className="inline-flex min-h-12 cursor-pointer items-center justify-center gap-2 rounded-lg bg-slate-950 px-3 text-sm font-extrabold text-limefit active:scale-[0.98] dark:bg-white dark:text-slate-950">
+                <Camera size={18} /> Camera
+                <input
+                  id="receipt-camera-input"
+                  className="sr-only"
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  onChange={(event) => handleFile(event.target.files?.[0] ?? null)}
+                />
+              </label>
+              <label className="inline-flex min-h-12 cursor-pointer items-center justify-center gap-2 rounded-lg bg-white px-3 text-sm font-extrabold text-slate-700 shadow-sm active:scale-[0.98] dark:bg-slate-900 dark:text-slate-100">
+                <Images size={18} /> Gallery
+                <input
+                  id="receipt-gallery-input"
+                  className="sr-only"
+                  type="file"
+                  accept="image/*"
+                  onChange={(event) => handleFile(event.target.files?.[0] ?? null)}
+                />
+              </label>
+            </div>
           </div>
-        </label>
+        </div>
         {progress > 0 && progress < 100 && <div className="rounded-lg bg-lime-100 p-3 text-sm font-black text-lime-800">Scanning screenshot... {progress}%</div>}
         {ocrText && (
           <details className="rounded-lg bg-slate-50 p-3 text-sm dark:bg-slate-800">
@@ -198,7 +220,7 @@ export default function PaymentsPage() {
         </div>
       </section>
 
-      <button className="fixed bottom-24 right-5 grid h-16 w-16 place-items-center rounded-full bg-slate-950 text-limefit shadow-soft dark:bg-white dark:text-slate-950 md:hidden" onClick={() => document.querySelector<HTMLInputElement>('input[type=file]')?.click()}>
+      <button className="fixed bottom-24 right-5 grid h-16 w-16 place-items-center rounded-full bg-slate-950 text-limefit shadow-soft dark:bg-white dark:text-slate-950 md:hidden" onClick={() => document.getElementById('receipt-camera-input')?.click()}>
         <Camera size={26} />
       </button>
     </div>
