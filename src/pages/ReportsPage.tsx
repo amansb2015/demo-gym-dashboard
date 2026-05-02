@@ -81,26 +81,6 @@ export default function ReportsPage() {
           <h1 className="text-3xl font-black">Reports</h1>
           <p className="mt-1 text-sm font-semibold text-slate-500">Admin analytics and exports.</p>
         </div>
-        <div className="mt-4 flex flex-wrap gap-2">
-          <button
-            onClick={() => setChartView('daily')}
-            className={`rounded-full px-4 py-2 text-sm font-bold transition ${chartView === 'daily'
-                ? 'bg-emerald-500 text-white'
-                : 'bg-slate-100 text-slate-700'
-              }`}
-          >
-            Daily
-          </button>
-
-          <button
-            onClick={() => setChartView('monthly')}
-            className={`rounded-full px-4 py-2 text-sm font-bold transition ${chartView === 'monthly'
-                ? 'bg-emerald-500 text-white'
-                : 'bg-slate-100 text-slate-700'
-              }`}
-          >
-            Monthly
-          </button>
           <div className="w-full sm:w-auto">
             <Button
               className="w-full sm:w-auto"
@@ -145,6 +125,27 @@ export default function ReportsPage() {
               LIVE
             </div>
           </div>
+          <div className="mt-4 flex flex-wrap gap-2">
+          <button
+            onClick={() => setChartView('daily')}
+            className={`rounded-full px-4 py-2 text-sm font-bold transition ${chartView === 'daily'
+                ? 'bg-emerald-500 text-white'
+                : 'bg-slate-100 text-slate-700'
+              }`}
+          >
+            Daily
+          </button>
+
+          <button
+            onClick={() => setChartView('monthly')}
+            className={`rounded-full px-4 py-2 text-sm font-bold transition ${chartView === 'monthly'
+                ? 'bg-emerald-500 text-white'
+                : 'bg-slate-100 text-slate-700'
+              }`}
+          >
+            Monthly
+          </button>
+        </div>
 
           <div className="mt-6 h-72">
             <ResponsiveContainer width="100%" height="100%">
