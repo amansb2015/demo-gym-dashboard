@@ -64,7 +64,7 @@ export default function ReportsPage() {
     label,
     revenue,
   }));
-}, [payments, chartView]);
+  }, [payments, chartView]);
 
   const methodSplit = [
     { name: 'Cash', value: payments.filter((payment) => payment.method === 'cash').length, color: '#f97316' },
@@ -76,12 +76,12 @@ export default function ReportsPage() {
 
   return (
     <div className="space-y-5 px-4 pt-6 pb-24 md:ml-60">
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-3xl font-black">Reports</h1>
           <p className="mt-1 text-sm font-semibold text-slate-500">Admin analytics and exports.</p>
         </div>
-        <div className="mt-4 flex gap-2">
+        <div className="mt-4 flex flex-wrap gap-2">
           <button
             onClick={() => setChartView('daily')}
             className={`rounded-full px-4 py-2 text-sm font-bold transition ${
@@ -103,11 +103,26 @@ export default function ReportsPage() {
           >
             Monthly
           </button>
+          <div className="w-full sm:w-auto">
+          <Button
+            className="w-full sm:w-auto"
+            onClick={() =>
+              downloadCsv(
+                'gymflow-payments.csv',
+                payments.map((payment) => ({
+                  receipt: payment.receipt_id,
+                  member: payment.members?.full_name,
+                  amount: payment.amount,
+                  method: payment.method,
+                  paid_at: payment.paid_at,
+                }))
+              )
+            }
+          >
+            <Download size={18} /> CSV
+          </Button>
+          </div>
         </div>
-        <Button onClick={() => downloadCsv('gymflow-payments.csv', payments.map((payment) => ({ receipt: payment.receipt_id, member: payment.members?.full_name, amount: payment.amount, method: payment.method, paid_at: payment.paid_at })))}>
-          <Download size={18} /> CSV
-        </Button>
-      </div>
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatCard title="Revenue" value={formatCurrency(revenue)} icon={FileText} />
@@ -116,7 +131,7 @@ export default function ReportsPage() {
         <StatCard title="Visits" value={attendance.length} icon={FileText} tone="orange" />
       </div>
 
-      <section className="mobile-card overflow-hidden ">
+      <section className="mobile-card overflow-hidden">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-xl font-black tracking-tight text-slate-900 dark:text-white">
@@ -133,7 +148,7 @@ export default function ReportsPage() {
           </div>
         </div>
 
-        <div className="mt-6 h-72 ">
+        <div className="mt-6 h-72">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart
               data={chartData}
@@ -166,7 +181,7 @@ export default function ReportsPage() {
               />
 
               <YAxis
-                width ={50}
+                width={50}
                 tickLine={false}
                 axisLine={false}
                 fontSize={12}
