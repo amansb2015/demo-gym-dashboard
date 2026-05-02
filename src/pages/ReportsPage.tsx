@@ -44,10 +44,12 @@ export default function ReportsPage() {
       const date = new Date(payment.paid_at);
 
       if (chartView === 'daily') {
-        const day = date.toLocaleDateString('en-IN', {
-          day: 'numeric',
-          month: 'short',
-        });
+        const dayKey = date.toISOString().split('T')[0];
+
+        totals.set(
+          dayKey,
+          (totals.get(dayKey) ?? 0) + Number(payment.amount)
+        );
 
         totals.set(day, (totals.get(day) ?? 0) + Number(payment.amount));
       } else {
@@ -60,11 +62,16 @@ export default function ReportsPage() {
       }
     });
 
-    return Array.from(totals.entries()).map(([label, revenue]) => ({
-      label,
-      revenue,
-    }));
-  }, [payments, chartView]);
+    return Array.from(totals.entries())
+      .sort((a, b) => new Date(a[0]).getTime() - new Date(b[0]).getTime())
+      .map(([date, revenue]) => ({
+        label: new Date(date).toLocaleDateString('en-IN', {
+          day: '2-digit',
+          month: 'short',
+        }),
+        revenue,
+      }));
+    }, [payments, chartView]);
 
   const methodSplit = [
     { name: 'Cash', value: payments.filter((payment) => payment.method === 'cash').length, color: '#f97316' },
@@ -177,6 +184,7 @@ export default function ReportsPage() {
                   axisLine={false}
                   fontSize={12}
                   stroke="#94a3b8"
+                  interval="preserveStartEnd"
                 />
 
                 <YAxis
@@ -202,7 +210,7 @@ export default function ReportsPage() {
                 />
 
                 <Area
-                  type="monotone"
+                  type="linear"
                   dataKey="revenue"
                   stroke="#10b981"
                   strokeWidth={4}
