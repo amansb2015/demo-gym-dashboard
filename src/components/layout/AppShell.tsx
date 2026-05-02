@@ -20,8 +20,8 @@ export function AppShell() {
   const visibleItems = navItems.filter((item) => !item.adminOnly || isAdmin);
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-950 dark:bg-slate-950 dark:text-white">
-      <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-slate-50/90 px-4 py-3 backdrop-blur dark:border-slate-800 dark:bg-slate-950/90">
+    <div className="min-h-screen safe-top safe-bottom bg-slate-50 text-slate-950 dark:bg-slate-950 dark:text-white">
+      <header className="sticky top-0 z-50 border-b border-slate-200/60 bg-slate-50/80 px-4 py-4 backdrop-blur-xl supports-[backdrop-filter]:bg-slate-50/70 dark:border-slate-800 dark:bg-slate-950/80">
         <div className="mx-auto flex max-w-6xl items-center justify-between">
           <button className="flex items-center gap-3 text-left" onClick={() => navigate('/dashboard')}>
             <div className="grid h-11 w-11 place-items-center rounded-lg bg-slate-950 text-limefit dark:bg-white dark:text-slate-950">
