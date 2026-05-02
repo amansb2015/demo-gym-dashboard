@@ -31,7 +31,7 @@ export function parsePaymentText(rawText: string): OcrPaymentData {
 
   return {
     rawText,
-    amount: extractAmount(compact),
+    amount: extractAmount(rawText, compact),
     upiId: upiMatch?.[0],
     transactionId: transactionId && transactionId !== utrNumber ? transactionId : undefined,
     utrNumber,
@@ -44,25 +44,39 @@ function normalizeOcrText(text: string) {
   return text
     .replace(/\u20b9/g, ' INR ')
     .replace(/\u00e2\u201a\u00b9/g, ' INR ')
+    .replace(/(?:rupees?|rs\.?|inr)/gi, ' INR ')
     .replace(/\b(Rs|Rs\.|INR)\b/gi, ' INR ')
     .replace(/[|]/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
 }
 
-function extractAmount(text: string) {
+function extractAmount(rawText: string, normalizedText: string) {
+  const raw = rawText.replace(/\s+/g, ' ').trim();
   const patterns = [
-    /(?:amount|paid|sent|received|debited|credited|total)[\s:.-]*(?:INR\s*)?([0-9]{1,3}(?:,[0-9]{2,3})*(?:\.\d{1,2})?|[0-9]+(?:\.\d{1,2})?)/i,
-    /INR\s*([0-9]{1,3}(?:,[0-9]{2,3})*(?:\.\d{1,2})?|[0-9]+(?:\.\d{1,2})?)/i,
-    /([0-9]{1,3}(?:,[0-9]{2,3})*(?:\.\d{1,2})?|[0-9]+(?:\.\d{1,2})?)\s*INR/i,
+    /(?:\u20b9|₹|rs\.?|inr)\s*([0-9]{1,3}(?:,[0-9]{2,3})*(?:\.\d{1,2})?|[0-9]+(?:\.\d{1,2})?)\s*(?:\/-)?/i,
+    /(?:amount|paid|sent|received|debited|credited|total)[\s:.-]*(?:\u20b9|₹|rs\.?|inr)?\s*([0-9]{1,3}(?:,[0-9]{2,3})*(?:\.\d{1,2})?|[0-9]+(?:\.\d{1,2})?)\s*(?:\/-)?/i,
+    /([0-9]{1,3}(?:,[0-9]{2,3})*(?:\.\d{1,2})?|[0-9]+(?:\.\d{1,2})?)\s*(?:\/-)?\s*(?:rs\.?|inr)/i,
+    /INR\s*([0-9]{1,3}(?:,[0-9]{2,3})*(?:\.\d{1,2})?|[0-9]+(?:\.\d{1,2})?)\s*(?:\/-)?/i,
+    /([0-9]{1,3}(?:,[0-9]{2,3})*(?:\.\d{1,2})?|[0-9]+(?:\.\d{1,2})?)\s*(?:\/-)?\s*INR/i,
   ];
 
-  for (const pattern of patterns) {
-    const match = text.match(pattern);
-    if (match) return Number(match[1].replace(/,/g, ''));
+  for (const pattern of patterns.slice(0, 3)) {
+    const match = raw.match(pattern);
+    if (match) return parseAmount(match[1]);
+  }
+
+  for (const pattern of patterns.slice(3)) {
+    const match = normalizedText.match(pattern);
+    if (match) return parseAmount(match[1]);
   }
 
   return undefined;
+}
+
+function parseAmount(value: string) {
+  const amount = Number(value.replace(/,/g, ''));
+  return Number.isFinite(amount) ? amount : undefined;
 }
 
 function extractTransactionId(text: string) {

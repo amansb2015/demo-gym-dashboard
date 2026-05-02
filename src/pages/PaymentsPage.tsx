@@ -44,6 +44,7 @@ export default function PaymentsPage() {
     setFile(nextFile);
     setOcrText('');
     setProgress(0);
+    setPaidAt('');
     if (!nextFile) return;
     try {
       const result = await readPaymentScreenshot(nextFile, setProgress);
@@ -53,8 +54,12 @@ export default function PaymentsPage() {
       if (result.utrNumber) setUtrNumber(result.utrNumber);
       if (result.upiId) setUpiId(result.upiId);
       if (result.senderName) setSenderName(result.senderName);
-      if (result.paidAt) setPaidAt(result.paidAt);
-      toast.success('Screenshot scanned. Please review before saving.');
+      if (result.paidAt) {
+        setPaidAt(result.paidAt);
+        toast.success('Screenshot scanned. Please review before saving.');
+      } else {
+        toast.warning('Screenshot scanned, but no receipt date was found. Please enter the date from the receipt.');
+      }
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'OCR failed');
     } finally {
@@ -82,7 +87,7 @@ export default function PaymentsPage() {
         member_id: memberId,
         amount: Number(amount),
         method,
-        paid_at: new Date(paidAt).toISOString(),
+        paid_at: localDateTimeToIso(paidAt),
         added_by: user.id,
         notes: notes || null,
         receipt_id: receiptId,
@@ -251,4 +256,9 @@ function Field({ label, value, onChange }: { label: string; value: string; onCha
 function toDateTimeLocalValue(date: Date) {
   const pad = (value: number) => String(value).padStart(2, '0');
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+}
+
+function localDateTimeToIso(value: string) {
+  if (!value) throw new Error('Please enter the receipt date and time.');
+  return new Date(value).toISOString();
 }
