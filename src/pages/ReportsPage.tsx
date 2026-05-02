@@ -50,8 +50,6 @@ export default function ReportsPage() {
           dayKey,
           (totals.get(dayKey) ?? 0) + Number(payment.amount)
         );
-
-        totals.set(day, (totals.get(day) ?? 0) + Number(payment.amount));
       } else {
         const month = date.toLocaleDateString('en-IN', {
           month: 'short',
